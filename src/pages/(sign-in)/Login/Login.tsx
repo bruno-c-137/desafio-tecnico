@@ -1,37 +1,87 @@
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { useLayout } from "@/context/UseLayout";
 import { useState } from "react";
 import "./style.scss";
+import Services from "@/services/services";
+import DialogError from "@/components/DialogError/DialogError";
+
+type Inputs = {
+  email: string;
+  password: string;
+  name?: string;
+  confirmPassword?: string;
+};
 
 export default function LoginPage() {
   const navigate = useNavigate();
   const { login } = useLayout();
   const [search] = useSearchParams();
   const [isLogin, setIsLogin] = useState(true);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: "",
-    name: ""
-  });
+  const [sending, setSending] = useState<boolean>(false);
+  const [error, setError] = useState<any>();
+  const [isOpen, setIsOpen] = useState(false);
 
-  function handleLogin() {
-    const redirect = search.get("redirect") || "/";
-    login("logado");
-    navigate(redirect, { replace: true });
-  }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    handleLogin();
-  }
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    formState: { errors },
+  } = useForm<Inputs>();
 
-  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  }
+  const onSubmit: SubmitHandler<Inputs> = async (data: Inputs) => {
+    setSending(true);
+
+    try {
+      if (isLogin) {
+        // Login
+        const body: any = {
+          email: data?.email,
+          password: data?.password,
+        };
+
+        const resp = await Services.login(body);
+        if (resp) {
+          Services.setStorageToken(resp?.data);
+          console.log('Login realizado com sucesso');
+
+          const redirect = search.get("redirect") || "/";
+          login("logado");
+          navigate(redirect, { replace: true });
+        } else {
+          throw new Error("");
+        }
+      } else {
+        // Cadastro
+        const body: any = {
+          name: data?.name,
+          email: data?.email,
+          password: data?.password,
+          confirmPassword: data?.confirmPassword,
+        };
+
+        const resp = await Services.cadastro(body);
+        if (resp) {
+          console.log('Cadastro realizado com sucesso');
+          reset();
+          setIsLogin(true); // Volta para o formulário de login
+        } else {
+          throw new Error("");
+        }
+      }
+    } catch (e: any) {
+      setError([
+        e?.response?.data?.message || "Algo deu errado. Tente novamente.",
+      ]);
+      setIsOpen(true);
+    } finally {
+      setSending(false);
+    }
+  };
+
+
 
   return (
     <div className="w-full bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center">
@@ -56,7 +106,7 @@ export default function LoginPage() {
               </div>
 
               {/* Formulário */}
-              <form onSubmit={handleSubmit} className="space-y-6 animate-slide-up">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 animate-slide-up">
                 {!isLogin && (
                   <div className="animate-fade-in">
                     <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -64,13 +114,15 @@ export default function LoginPage() {
                     </label>
                     <input
                       type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleInputChange}
+                      {...register("name", {
+                        required: "Nome é obrigatório"
+                      })}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
                       placeholder="Digite seu nome"
-                      required
                     />
+                    {errors.name && (
+                      <span className="text-red-400 text-sm mt-1">{errors.name.message}</span>
+                    )}
                   </div>
                 )}
 
@@ -80,13 +132,19 @@ export default function LoginPage() {
                   </label>
                   <input
                     type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
+                    {...register("email", {
+                      required: "Email é obrigatório",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Email inválido"
+                      }
+                    })}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
                     placeholder="Digite seu email"
-                    required
                   />
+                  {errors.email && (
+                    <span className="text-red-400 text-sm mt-1">{errors.email.message}</span>
+                  )}
                 </div>
 
                 <div>
@@ -95,13 +153,19 @@ export default function LoginPage() {
                   </label>
                   <input
                     type="password"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
+                    {...register("password", {
+                      required: "Senha é obrigatória",
+                      minLength: {
+                        value: 6,
+                        message: "Senha deve ter pelo menos 6 caracteres"
+                      }
+                    })}
                     className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
                     placeholder="Digite sua senha"
-                    required
                   />
+                  {errors.password && (
+                    <span className="text-red-400 text-sm mt-1">{errors.password.message}</span>
+                  )}
                 </div>
 
                 {!isLogin && (
@@ -111,13 +175,19 @@ export default function LoginPage() {
                     </label>
                     <input
                       type="password"
-                      name="confirmPassword"
-                      value={formData.confirmPassword}
-                      onChange={handleInputChange}
+                      {...register("confirmPassword", {
+                        required: "Confirmação de senha é obrigatória",
+                        validate: (value) => {
+                          const password = watch("password");
+                          return value === password || "Senhas não coincidem";
+                        }
+                      })}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
                       placeholder="Confirme sua senha"
-                      required
                     />
+                    {errors.confirmPassword && (
+                      <span className="text-red-400 text-sm mt-1">{errors.confirmPassword.message}</span>
+                    )}
                   </div>
                 )}
 
@@ -125,9 +195,20 @@ export default function LoginPage() {
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl submit-button"
+                  disabled={sending}
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl submit-button disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isLogin ? "Entrar" : "Criar conta"}
+                  {sending ? (
+                    <span className="flex items-center justify-center">
+                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      {isLogin ? "Entrando..." : "Criando conta..."}
+                    </span>
+                  ) : (
+                    isLogin ? "Entrar" : "Criar conta"
+                  )}
                 </button>
               </form>
 
@@ -156,8 +237,13 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-
+      <DialogError
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        errors={error}
+      />
 
     </div>
   );
 }
+

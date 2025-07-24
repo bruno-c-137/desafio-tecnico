@@ -1,0 +1,34 @@
+import CONSTANTS from "@/constants";
+import axios from "axios";
+
+const ax = axios.create({
+    baseURL: import.meta.env.VITE_API,
+});
+
+const Services = {
+    getStorageToken: () => {
+        try {
+            const getAuth: any = window.localStorage.getItem(CONSTANTS.STORAGE.AUTH);
+            const storageToken: any = JSON.parse(getAuth);
+            return storageToken;
+        } catch {
+            return undefined;
+        }
+    },
+    setStorageToken: (data: any) => {
+        window.localStorage.setItem(CONSTANTS.STORAGE.AUTH, JSON.stringify(data));
+    },
+
+
+    login: (body: any) =>
+        ax.post(`/auth/login`, JSON.stringify(body), {
+            headers: { "Content-Type": "application/json" },
+        }),
+    cadastro: (body: any) =>
+        ax.post(`/auth/register`, JSON.stringify(body), {
+            headers: { "Content-Type": "application/json" },
+        }),
+
+};
+
+export default Services;
