@@ -20,6 +20,7 @@ const Services = {
     },
 
 
+
     login: (body: any) =>
         ax.post(`/auth/login`, JSON.stringify(body), {
             headers: { "Content-Type": "application/json" },
@@ -28,7 +29,25 @@ const Services = {
         ax.post(`/auth/register`, JSON.stringify(body), {
             headers: { "Content-Type": "application/json" },
         }),
+    addClients: (body: any) =>
+        ax.post(`/clients`, JSON.stringify(body), {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${Services.getStorageToken()?.token}`
+            },
+        }),
+    editClients: (id: number, body: any) =>
+        ax.put(`/clients/${id}`, JSON.stringify(body), {
+            headers: { "Content-Type": "application/json" },
+        }),
+    deletClients: (id: number, body: any) =>
+        ax.put(`/clients/${id}`, JSON.stringify(body), {
+            headers: { "Content-Type": "application/json" },
+        }),
+
+    listClients: () => `/clients`,
 
 };
+
 
 export default Services;

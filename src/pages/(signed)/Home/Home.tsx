@@ -5,11 +5,15 @@ import "./style.scss";
 import { useState } from "react";
 import ModalFormAddClient from "./sections/ModalFormAddClient";
 
-
-
 export default function HomePage() {
+  const [showModal, setShowModal] = useState(false);
 
-  const [showModal, setShowModal] = useState(true);
+  const [shouldMutate, setShouldMutate] = useState(false);
+
+  // Efeito para chamar o mutate quando shouldMutate for true
+
+
+
 
   const ModalNovoCliente: any = () => {
     return (
@@ -18,19 +22,13 @@ export default function HomePage() {
           size={`sm`}
           open={!!showModal}
           onClose={() => {
-
-
             setShowModal(false);
           }}
-        // dialogClassName={`modal-regulamento`}
         >
           <Modal.Header></Modal.Header>
-
-
           <Modal.Body>
-            <ModalFormAddClient />
+            <ModalFormAddClient onClose={setShowModal} onSuccess={setShouldMutate} />
           </Modal.Body>
-
         </Modal>
       </div>
     )
@@ -39,7 +37,7 @@ export default function HomePage() {
   return (
     <>
       {ModalNovoCliente()}
-      <ListClients />
+      <ListClients onOpenModal={setShowModal} onMutateReady={shouldMutate} />
     </>
   );
 }

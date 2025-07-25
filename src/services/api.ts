@@ -9,8 +9,11 @@ const Api = (auth = true, options: any = {}) => {
     }
 
     if (auth && !headers?.Authorization) {
+
+
         const storageToken = Services.getStorageToken();
-        headers.Authorization = `Bearer ${storageToken?.token?.accessToken}`;
+        headers.Authorization = `Bearer ${storageToken?.token}`;
+
     }
 
     options.headers = headers;
