@@ -2,6 +2,8 @@ import { Navigate, Outlet, RouterProvider, createBrowserRouter } from "react-rou
 
 import ProvideLayout, { useLayout } from "@/context/UseLayout";
 import { lazy } from "react";
+import ErrorBoundary from "@/components/ErrorBoundary/ErrorBoundary";
+import ErrorElement from "@/components/ErrorBoundary/ErrorElement";
 const LoginPage = lazy(() => import("@/pages/(sign-in)/Login/Login"));
 const HomePage = lazy(() => import("@/pages/(signed)/Home/Home"));
 const LayoutSignIn = lazy(() => import("@/pages/(sign-in)/LayoutSegnIn/LayoutSegnIn"));
@@ -11,6 +13,7 @@ const LoadingComponent = lazy(() => import("@/components/Loading/Loading"));
 
 function ProtectedLoader() {
     const { token } = useLayout();
+
     if (!!token) {
         return <Outlet />
     } else {
@@ -23,10 +26,23 @@ function ProtectedLoader() {
     }
 }
 
+function PublicLoader() {
+    const { token } = useLayout();
+    if (!!token) {
+        return <Navigate to="/" replace={true} />
+    } else {
+        return <Outlet />
+    }
+}
+
+
+
+
 const RouterConfig = createBrowserRouter([
     {
         path: "/",
         Component: ProvideLayout,
+        errorElement: <ErrorElement />,
         children: [
             /* 
             * Páginas logadas
@@ -34,18 +50,22 @@ const RouterConfig = createBrowserRouter([
             {
                 path: '/',
                 Component: ProtectedLoader,
+                errorElement: <ErrorElement />,
                 children: [
                     {
                         path: '/',
                         Component: LayoutSigned,
+                        errorElement: <ErrorElement />,
                         children: [
                             {
                                 path: '/',
                                 Component: HomePage,
+                                errorElement: <ErrorElement />,
                             },
                             {
                                 path: '/sobre',
                                 Component: AboutPage,
+                                errorElement: <ErrorElement />,
                             }
                         ]
                     }
@@ -56,12 +76,20 @@ const RouterConfig = createBrowserRouter([
             */
             {
                 path: '/',
-                Component: LayoutSignIn,
+                Component: PublicLoader,
                 children: [
                     {
-                        path: '/login',
-                        Component: LoginPage
-                    },
+                        path: '/',
+                        Component: LayoutSignIn,
+                        errorElement: <ErrorElement />,
+                        children: [
+                            {
+                                path: '/login',
+                                Component: LoginPage,
+                                errorElement: <ErrorElement />,
+                            },
+                        ]
+                    }
                 ]
             },
         ]
@@ -70,6 +98,8 @@ const RouterConfig = createBrowserRouter([
 
 export default function Router() {
     return (
-        <RouterProvider router={RouterConfig} fallbackElement={<LoadingComponent />} />
+        <ErrorBoundary>
+            <RouterProvider router={RouterConfig} fallbackElement={<LoadingComponent />} />
+        </ErrorBoundary>
     )
 }
