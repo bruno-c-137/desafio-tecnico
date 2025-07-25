@@ -7,12 +7,28 @@ import ModalFormAddClient from "./sections/ModalFormAddClient";
 
 export default function HomePage() {
   const [showModal, setShowModal] = useState(false);
-
   const [shouldMutate, setShouldMutate] = useState(false);
+  const [clienteParaEditar, setClienteParaEditar] = useState<any>(null);
+  const [isEditing, setIsEditing] = useState(false);
 
-  // Efeito para chamar o mutate quando shouldMutate for true
+  // Função para abrir modal de edição
+  const handleOpenEditModal = (cliente: any) => {
+    setClienteParaEditar(cliente);
+    setIsEditing(true);
+    setShowModal(true);
+  };
 
+  // Função para abrir modal de adição
+  const handleOpenAddModal = () => {
+    setClienteParaEditar(null);
+    setIsEditing(false);
+    setShowModal(true);
+  };
 
+  // Função para fechar modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+  };
 
 
   const ModalNovoCliente: any = () => {
@@ -21,13 +37,16 @@ export default function HomePage() {
         <Modal
           size={`sm`}
           open={!!showModal}
-          onClose={() => {
-            setShowModal(false);
-          }}
+          onClose={handleCloseModal}
         >
           <Modal.Header></Modal.Header>
           <Modal.Body>
-            <ModalFormAddClient onClose={setShowModal} onSuccess={setShouldMutate} />
+            <ModalFormAddClient
+              onClose={handleCloseModal}
+              onSuccess={setShouldMutate}
+              clienteParaEditar={clienteParaEditar}
+              isEditing={isEditing}
+            />
           </Modal.Body>
         </Modal>
       </div>
@@ -37,7 +56,11 @@ export default function HomePage() {
   return (
     <>
       {ModalNovoCliente()}
-      <ListClients onOpenModal={setShowModal} onMutateReady={shouldMutate} />
+      <ListClients
+        onOpenModal={handleOpenAddModal}
+        onOpenEditModal={handleOpenEditModal}
+        onMutateReady={shouldMutate}
+      />
     </>
   );
 }

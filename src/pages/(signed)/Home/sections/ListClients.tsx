@@ -11,6 +11,7 @@ import DialogConfirm from "@/components/DialogConfirm/DialogConfirm";
 interface ListClientsProps {
     onMutateReady: boolean;
     onOpenModal: (e: boolean) => void;
+    onOpenEditModal: (cliente: any) => void;
 }
 
 function sleep(ms: number) {
@@ -33,7 +34,7 @@ const TableSkeleton = () => (
     </div>
 );
 
-export default function ListClients({ onMutateReady, onOpenModal }: ListClientsProps) {
+export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModal }: ListClientsProps) {
     const { user, logout } = useLayout();
     const navigate = useNavigate();
     const [animandoId, setAnimandoId] = useState<number | null>(null);
@@ -77,13 +78,10 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
 
             // Atualizar a lista de clientes após exclusão bem-sucedida
             mutate();
-
             setDialogFeedback("Cliente excluído!");
             await sleep(1500); // Mostrar sucesso por mais tempo
-
             // Fechar dialog após mostrar sucesso
             setShowDeleteDialog(false);
-
             setClienteToDelete(null);
             setDialogFeedback(null);
 
@@ -91,10 +89,8 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
         } catch (error) {
             setDialogFeedback("Erro ao excluir cliente");
             await sleep(2000); // Mostrar erro por mais tempo
-
             // Fechar dialog após mostrar erro
             setShowDeleteDialog(false);
-
             setClienteToDelete(null);
             setDialogFeedback(null);
 
@@ -142,7 +138,7 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
                             <div className="flex gap-2 pt-2">
                                 <button
                                     className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition-all duration-150 text-sm font-medium"
-                                // onClick={() => abrirModalEditar(cliente)}
+                                    onClick={() => onOpenEditModal(cliente)}
                                 >
                                     Editar
                                 </button>
@@ -192,7 +188,7 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
                                 <td className="px-4 py-3 flex gap-2 justify-center">
                                     <button
                                         className="px-3 py-1 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition-all duration-150"
-                                    // onClick={() => abrirModalEditar(cliente)}
+                                        onClick={() => onOpenEditModal(cliente)}
                                     >
                                         Editar
                                     </button>

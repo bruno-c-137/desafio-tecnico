@@ -38,7 +38,10 @@ const Services = {
         }),
     editClients: (id: number, body: any) =>
         ax.put(`/clients/${id}`, JSON.stringify(body), {
-            headers: { "Content-Type": "application/json" },
+            headers: { 
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${Services.getStorageToken()?.token}`
+            },
         }),
     deletClients: (id: number) =>
         ax.delete(`/clients/${id}`, {
