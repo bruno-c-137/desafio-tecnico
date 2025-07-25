@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import Services from "@/services/services";
 import useSWR from "swr";
 import { fetcher } from "@/services/api";
+import DialogConfirm from "@/components/DialogConfirm/DialogConfirm";
 
 interface Cliente {
     id: number;
@@ -39,13 +40,13 @@ const TableSkeleton = () => (
 export default function ListClients({ onMutateReady, onOpenModal }: ListClientsProps) {
     const { user, logout } = useLayout();
     const navigate = useNavigate();
-    const [clientes, setClientes] = useState<Cliente[]>([
-        { id: 1, nome: "João Silva", email: "joao@email.com" },
-        { id: 2, nome: "Maria Souza", email: "maria@email.com" },
-    ]);
+
 
     const [animandoId, setAnimandoId] = useState<number | null>(null);
-    const [feedback, setFeedback] = useState<string | null>(null);
+
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [clienteToDelete, setClienteToDelete] = useState<any>(null);
+    const [dialogFeedback, setDialogFeedback] = useState<string | null>(null);
 
     const { data, isLoading, error, mutate } = useSWR<any, any>(
         Services?.listClients(),
@@ -70,15 +71,58 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
 
 
 
-    async function excluirCliente(id: number) {
-        setAnimandoId(id);
-        setFeedback("Excluindo...");
-        await sleep(400);
-        setClientes((prev) => prev.filter((c) => c.id !== id));
-        setFeedback("Cliente excluído!");
-        await sleep(600);
-        setAnimandoId(null);
-        setFeedback(null);
+
+
+    function confirmarExclusao(cliente: any) {
+        setClienteToDelete(cliente);
+        setShowDeleteDialog(true);
+    }
+
+    async function executarExclusao() {
+        if (!clienteToDelete) return;
+
+        setAnimandoId(clienteToDelete.id);
+        setDialogFeedback("Excluindo...");
+        // Não fechar o dialog imediatamente
+
+        try {
+            // Chamada para a API de exclusão
+            await Services.deletClients(clienteToDelete.id);
+
+            // Atualizar a lista de clientes após exclusão bem-sucedida
+            mutate();
+
+            setDialogFeedback("Cliente excluído!");
+            await sleep(1500); // Mostrar sucesso por mais tempo
+
+            // Fechar dialog após mostrar sucesso
+            setShowDeleteDialog(false);
+
+            setClienteToDelete(null);
+            setDialogFeedback(null);
+
+
+        } catch (error) {
+            setDialogFeedback("Erro ao excluir cliente");
+            await sleep(2000); // Mostrar erro por mais tempo
+
+            // Fechar dialog após mostrar erro
+            setShowDeleteDialog(false);
+
+            setClienteToDelete(null);
+            setDialogFeedback(null);
+
+        } finally {
+            setAnimandoId(null);
+        }
+    }
+
+    function cancelarExclusao() {
+        setShowDeleteDialog(false);
+        // Limpar o cliente após fechar o dialog para evitar undefined na mensagem
+        setTimeout(() => {
+            setClienteToDelete(null);
+        }, 300); // Aguarda a animação de fechamento
     }
 
     function handleLogout() {
@@ -118,7 +162,7 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
                                 </button>
                                 <button
                                     className="flex-1 px-3 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition-all duration-150 text-sm font-medium"
-                                    onClick={() => excluirCliente(cliente.id)}
+                                    onClick={() => confirmarExclusao(cliente)}
                                     disabled={animandoId === cliente.id}
                                 >
                                     Excluir
@@ -168,7 +212,7 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
                                     </button>
                                     <button
                                         className="px-3 py-1 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition-all duration-150"
-                                        onClick={() => excluirCliente(cliente.id)}
+                                        onClick={() => confirmarExclusao(cliente)}
                                         disabled={animandoId === cliente.id}
                                     >
                                         Excluir
@@ -221,6 +265,7 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
                     >
                         + Novo Cliente
                     </button>
+
                     <div className="relative  rounded-xl shadow-lg bg-white animate-fade-in-up">
                         {isLoading ? (
                             <div className="p-6">
@@ -241,6 +286,18 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
 
                 </div>
             </div>
+            <DialogConfirm
+                isOpen={showDeleteDialog}
+                onCancel={cancelarExclusao}
+                onConfirm={executarExclusao}
+                title="Confirmar Exclusão"
+                message={`Tem certeza que deseja excluir o cliente "${clienteToDelete?.name || 'selecionado'}"? Esta ação não pode ser desfeita.`}
+                confirmText="Excluir"
+                cancelText="Cancelar"
+                type="danger"
+                feedback={dialogFeedback}
+                loading={!!dialogFeedback}
+            />
         </div>
     );
 }
