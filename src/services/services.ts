@@ -40,9 +40,13 @@ const Services = {
         ax.put(`/clients/${id}`, JSON.stringify(body), {
             headers: { "Content-Type": "application/json" },
         }),
-    deletClients: (id: number, body: any) =>
-        ax.put(`/clients/${id}`, JSON.stringify(body), {
-            headers: { "Content-Type": "application/json" },
+    deletClients: (id: number) =>
+        ax.delete(`/clients/${id}`, {
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${Services.getStorageToken()?.token}`
+            },
+
         }),
 
     listClients: () => `/clients`,

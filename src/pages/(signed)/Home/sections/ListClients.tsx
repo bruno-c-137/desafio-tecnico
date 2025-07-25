@@ -6,11 +6,7 @@ import useSWR from "swr";
 import { fetcher } from "@/services/api";
 import DialogConfirm from "@/components/DialogConfirm/DialogConfirm";
 
-interface Cliente {
-    id: number;
-    nome: string;
-    email: string;
-}
+
 
 interface ListClientsProps {
     onMutateReady: boolean;
@@ -40,10 +36,7 @@ const TableSkeleton = () => (
 export default function ListClients({ onMutateReady, onOpenModal }: ListClientsProps) {
     const { user, logout } = useLayout();
     const navigate = useNavigate();
-
-
     const [animandoId, setAnimandoId] = useState<number | null>(null);
-
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [clienteToDelete, setClienteToDelete] = useState<any>(null);
     const [dialogFeedback, setDialogFeedback] = useState<string | null>(null);
@@ -57,19 +50,12 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
         }
     );
 
-    console.log(user);
-
     // Passar o mutate para o componente pai quando estiver disponível
     useEffect(() => {
-
-
         if (onMutateReady) {
-
             mutate()
         }
     }, [onMutateReady]);
-
-
 
 
 
@@ -265,6 +251,28 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
                     >
                         + Novo Cliente
                     </button>
+
+                    {/* Exibição de erro do SWR */}
+                    {error && (
+                        <div className="mb-6 flex justify-center">
+                            <div className="inline-flex items-center gap-3 px-6 py-4 rounded-xl shadow-lg bg-red-50 border-2 border-red-200 animate-fade-in-up">
+                                <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                                    <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
+                                        <path fill="#fff" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
+                                    </svg>
+                                </div>
+                                <span className="text-red-700 font-medium">
+                                    Erro ao carregar clientes: {error?.message || 'Erro desconhecido'}
+                                </span>
+                                <button
+                                    onClick={() => mutate()}
+                                    className="ml-2 px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm"
+                                >
+                                    Tentar Novamente
+                                </button>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="relative  rounded-xl shadow-lg bg-white animate-fade-in-up">
                         {isLoading ? (
