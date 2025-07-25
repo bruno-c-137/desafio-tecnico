@@ -3,9 +3,11 @@ import {
     createContext,
     useState,
     Suspense,
+    useEffect,
 } from 'react';
 import { Outlet } from 'react-router-dom';
 import LoadingComponent from '@/components/Loading/Loading';
+import Services from '@/services/services';
 
 interface LayoutProps {
     token?: string;
@@ -38,6 +40,14 @@ function useProvideLayout(): LayoutProps {
         window?.localStorage?.removeItem('token');
         setToken(undefined);
     }
+
+    useEffect(() => {
+        if (token) {
+            setUser(Services.getStorageToken()?.user);
+        } else {
+            setUser(undefined);
+        }
+    }, [token]);
 
     return {
         token,

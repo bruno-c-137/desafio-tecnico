@@ -56,6 +56,8 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
         }
     );
 
+    console.log(user);
+
     // Passar o mutate para o componente pai quando estiver disponível
     useEffect(() => {
 
@@ -87,7 +89,7 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
     return (
         <div className="list-clients bg-gradient-to-br from-green-50 to-green-200 min-h-screen">
             <div className="container flex flex-col flex-1 min-h-screen ">
-                <div className="flex flex-col md:flex-row justify-between items-center py-8 px-2 animate-fade-in">
+                <div className="flex  justify-between items-center py-8 px-2 animate-fade-in">
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-full bg-green-200 flex items-center justify-center text-2xl font-bold text-green-700 shadow">
                             {(user && user.name?.[0]?.toUpperCase()) || "U"}
@@ -99,7 +101,7 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
                     </div>
                     <button
                         onClick={handleLogout}
-                        className="mt-6 md:mt-0 px-5 py-2 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-lg shadow hover:scale-105 hover:from-red-500 hover:to-red-700 transition-all duration-200 font-semibold flex items-center gap-2"
+                        className=" px-5 py-2 bg-gradient-to-r from-red-400 to-red-600 text-white rounded-lg shadow hover:scale-105 hover:from-red-500 hover:to-red-700 transition-all duration-200 font-semibold flex items-center gap-2"
                     >
                         <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path fill="#fff" d="M16 13v-2H7V8l-5 4 5 4v-3h9zm3-10H5c-1.1 0-2 .9-2 2v6h2V5h14v14H5v-4H3v6c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z" /></svg>
                         Sair
