@@ -8,7 +8,6 @@ const LoginPage = lazy(() => import("@/pages/(sign-in)/Login/Login"));
 const HomePage = lazy(() => import("@/pages/(signed)/Home/Home"));
 const LayoutSignIn = lazy(() => import("@/pages/(sign-in)/LayoutSegnIn/LayoutSegnIn"));
 const LayoutSigned = lazy(() => import("@/pages/(signed)/LayoutSigned/LayoutSigned"));
-const AboutPage = lazy(() => import("@/pages/(signed)/About/About"));
 const LoadingComponent = lazy(() => import("@/components/Loading/Loading"));
 
 function ProtectedLoader() {
@@ -60,11 +59,6 @@ const RouterConfig = createBrowserRouter([
                             {
                                 path: '/',
                                 Component: HomePage,
-                                errorElement: <ErrorElement />,
-                            },
-                            {
-                                path: '/sobre',
-                                Component: AboutPage,
                                 errorElement: <ErrorElement />,
                             }
                         ]
