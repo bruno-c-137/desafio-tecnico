@@ -61,6 +61,21 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
         }
     }, [onMutateReady]);
 
+    // Ajustar página quando necessário após exclusões
+    useEffect(() => {
+        if (data?.data?.clients) {
+            const totalPages = Math.ceil(data.data.clients.length / itemsPerPage);
+
+            // Se a página atual é maior que o total de páginas disponíveis, vai para a última página
+            if (currentPage > totalPages && totalPages > 0) {
+                setCurrentPage(totalPages);
+            }
+            // Se não há clientes, volta para página 1
+            else if (data.data.clients.length === 0) {
+                setCurrentPage(1);
+            }
+        }
+    }, [data?.data?.clients, currentPage, itemsPerPage]);
 
 
     function confirmarExclusao(cliente: any) {
