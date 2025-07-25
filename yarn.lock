@@ -1029,6 +1029,11 @@
     "@types/prop-types" "*"
     csstype "^3.0.2"
 
+"@types/vanilla-masker@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.npmjs.org/@types/vanilla-masker/-/vanilla-masker-1.2.4.tgz#cc6504eede682e9cac04200502cd231d65a0e2eb"
+  integrity sha512-xPFAeYZ17SShYAwNeSY2X4GBDbsYIQgLOQv0AmO9F0KO7cdgYIzEiRXdVrxvCGZDGj6LNI4OCM+0riL2PHWX4g==
+
 "@typescript-eslint/eslint-plugin@^7.2.0":
   version "7.18.0"
   resolved "https://registry.npmjs.org/@typescript-eslint/eslint-plugin/-/eslint-plugin-7.18.0.tgz#b16d3cf3ee76bf572fdf511e79c248bdec619ea3"
@@ -2588,6 +2593,11 @@ use-sync-external-store@^1.5.0:
   version "1.5.0"
   resolved "https://registry.npmjs.org/use-sync-external-store/-/use-sync-external-store-1.5.0.tgz#55122e2a3edd2a6c106174c27485e0fd59bcfca0"
   integrity sha512-Rb46I4cGGVBmjamjphe8L/UnvJD+uPPtTkNvX5mZgqdbavhI4EbgIWJiIHXJ8bc/i9EQGPRh4DwEURJ552Do0A==
+
+vanilla-masker@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.npmjs.org/vanilla-masker/-/vanilla-masker-1.2.0.tgz#c2830e9d994a5fecd2261506477c2707fe589756"
+  integrity sha512-5SQeksiWaRYfbTaLVcqDPlvINGRt7ODbmWqqMMdT4GuZEC01KJm7FxaytscI5GZ9mlkTNQDwqllSHbv1ENxQEA==
 
 vite-plugin-svgr@^4.2.0:
   version "4.3.0"

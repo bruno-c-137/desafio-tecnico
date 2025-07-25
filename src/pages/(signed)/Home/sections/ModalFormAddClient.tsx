@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Services from "@/services/services";
+import VMasker from "vanilla-masker";
 
 interface FormData {
     name: string;
@@ -175,19 +176,25 @@ export default function ModalFormAddClient({ onSuccess, onClose, clienteParaEdit
                     {/* Telefone */}
                     <div>
                         <label className="block text-sm font-medium text-green-700 mb-2">
-                            Telefone
+                            Telefone *
                         </label>
                         <input
                             {...register("phone", {
+                                required: "Telefone é obrigatório",
                                 pattern: {
                                     value: /^\(?([0-9]{2})\)?[-. ]?([0-9]{4,5})[-. ]?([0-9]{4})$/,
                                     message: "Telefone inválido (ex: (11) 99999-9999)"
                                 }
                             })}
-                            type="tel"
+                            // type="tel"
                             className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition-all ${errors.phone ? "border-red-300 focus:ring-red-400" : "border-green-200"
                                 }`}
-                            placeholder="(11) 99999-9999 (opcional)"
+                            placeholder="(11) 99999-9999"
+                            onInput={(e) => {
+                                const target = e.target as HTMLInputElement;
+                                const value = target.value.replace(/\D/g, '');
+                                target.value = VMasker.toPattern(value, "(99) 99999-9999");
+                            }}
                         />
                         {errors.phone && (
                             <span className="text-red-500 text-sm mt-1">{errors.phone.message}</span>
@@ -197,10 +204,11 @@ export default function ModalFormAddClient({ onSuccess, onClose, clienteParaEdit
                     {/* Empresa */}
                     <div>
                         <label className="block text-sm font-medium text-green-700 mb-2">
-                            Empresa
+                            Empresa *
                         </label>
                         <input
                             {...register("company", {
+                                required: "Empresa é obrigatória",
                                 minLength: {
                                     value: 2,
                                     message: "Empresa deve ter pelo menos 2 caracteres"
@@ -209,7 +217,7 @@ export default function ModalFormAddClient({ onSuccess, onClose, clienteParaEdit
                             type="text"
                             className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 transition-all ${errors.company ? "border-red-300 focus:ring-red-400" : "border-green-200"
                                 }`}
-                            placeholder="Digite o nome da empresa (opcional)"
+                            placeholder="Digite o nome da empresa"
                         />
                         {errors.company && (
                             <span className="text-red-500 text-sm mt-1">{errors.company.message}</span>
