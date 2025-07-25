@@ -86,6 +86,109 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
         navigate("/login");
     }
 
+    const ListMB: any = () => {
+        return (
+            <div className="md:hidden p-4 space-y-4">
+                {data?.data?.clients.map((cliente: any) => (
+                    <div
+                        key={cliente.id}
+                        className={`bg-white border border-green-200 rounded-lg p-4 shadow-sm transition-all duration-500 ${animandoId === cliente.id ? "bg-green-50 scale-[0.98] opacity-60" : "hover:bg-green-50"
+                            } animate-fade-in-up`}
+                        style={{ transition: "all 0.4s cubic-bezier(.4,2,.6,1)" }}
+                    >
+                        <div className="flex flex-col space-y-3">
+                            <div>
+                                <div className="text-sm font-medium text-green-600">Nome</div>
+                                <div className="text-base font-semibold text-green-900">{cliente.name}</div>
+                            </div>
+                            <div>
+                                <div className="text-sm font-medium text-green-600">Email</div>
+                                <div className="text-base text-green-700">{cliente.email}</div>
+                            </div>
+                            <div>
+                                <div className="text-sm font-medium text-green-600">Telefone</div>
+                                <div className="text-base text-green-700">{cliente.phone || "Não informado"}</div>
+                            </div>
+                            <div className="flex gap-2 pt-2">
+                                <button
+                                    className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition-all duration-150 text-sm font-medium"
+                                // onClick={() => abrirModalEditar(cliente)}
+                                >
+                                    Editar
+                                </button>
+                                <button
+                                    className="flex-1 px-3 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition-all duration-150 text-sm font-medium"
+                                    onClick={() => excluirCliente(cliente.id)}
+                                    disabled={animandoId === cliente.id}
+                                >
+                                    Excluir
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+                {data?.data?.clients.length === 0 && (
+                    <div className="text-center py-8 text-gray-400 animate-fade-in">
+                        Nenhum cliente cadastrado.
+                    </div>
+                )}
+            </div>
+        )
+    }
+
+    const ListDT: any = () => {
+        return (
+            <div className="hidden md:block">
+                <table className="w-full rounded-xl">
+                    <thead>
+                        <tr className="bg-green-100 text-green-800">
+                            <th className="px-4 py-3 text-left">Nome</th>
+                            <th className="px-4 py-3 text-left">Email</th>
+                            <th className="px-4 py-3 text-left">Telefone</th>
+                            <th className="px-4 py-3 text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {data?.data?.clients.map((cliente: any, index: number) => (
+                            <tr
+                                key={cliente.id}
+                                className={`${index + 1 == data?.data?.clients?.length ? "" : "border-b"}  transition-all duration-500 ${animandoId === cliente.id ? "bg-green-50 scale-[0.98] opacity-60" : "hover:bg-green-50"
+                                    } animate-fade-in-up`}
+                                style={{ transition: "all 0.4s cubic-bezier(.4,2,.6,1)" }}
+                            >
+                                <td className="px-4 py-3 font-medium text-green-900">{cliente.name}</td>
+                                <td className="px-4 py-3 text-green-700">{cliente.email}</td>
+                                <td className="px-4 py-3 text-green-700">{cliente.phone || "Não informado"}</td>
+                                <td className="px-4 py-3 flex gap-2 justify-center">
+                                    <button
+                                        className="px-3 py-1 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition-all duration-150"
+                                    // onClick={() => abrirModalEditar(cliente)}
+                                    >
+                                        Editar
+                                    </button>
+                                    <button
+                                        className="px-3 py-1 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition-all duration-150"
+                                        onClick={() => excluirCliente(cliente.id)}
+                                        disabled={animandoId === cliente.id}
+                                    >
+                                        Excluir
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                        {data?.data?.clients.length === 0 && (
+                            <tr>
+                                <td colSpan={4} className="text-center py-8 text-gray-400 animate-fade-in">
+                                    Nenhum cliente cadastrado.
+                                </td>
+                            </tr>
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        )
+    }
+
     return (
         <div className="list-clients bg-gradient-to-br from-green-50 to-green-200 min-h-screen">
             <div className="container flex flex-col flex-1 min-h-screen ">
@@ -124,50 +227,13 @@ export default function ListClients({ onMutateReady, onOpenModal }: ListClientsP
                                 <TableSkeleton />
                             </div>
                         ) : (
-                            <table className="w-full rounded-xl">
-                                <thead>
-                                    <tr className="bg-green-100 text-green-800">
-                                        <th className="px-4 py-3 text-left">Nome</th>
-                                        <th className="px-4 py-3 text-left">Email</th>
-                                        <th className="px-4 py-3 text-center">Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {data?.data?.clients.map((cliente: any) => (
-                                        <tr
-                                            key={cliente.id}
-                                            className={`border-b transition-all duration-500 ${animandoId === cliente.id ? "bg-green-50 scale-[0.98] opacity-60" : "hover:bg-green-50"
-                                                } animate-fade-in-up`}
-                                            style={{ transition: "all 0.4s cubic-bezier(.4,2,.6,1)" }}
-                                        >
-                                            <td className="px-4 py-3 font-medium text-green-900">{cliente.name}</td>
-                                            <td className="px-4 py-3 text-green-700">{cliente.email}</td>
-                                            <td className="px-4 py-3 flex gap-2 justify-center">
-                                                <button
-                                                    className="px-3 py-1 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition-all duration-150"
-                                                // onClick={() => abrirModalEditar(cliente)}
-                                                >
-                                                    Editar
-                                                </button>
-                                                <button
-                                                    className="px-3 py-1 bg-red-500 text-white rounded-lg shadow hover:bg-red-600 hover:scale-105 transition-all duration-150"
-                                                    onClick={() => excluirCliente(cliente.id)}
-                                                    disabled={animandoId === cliente.id}
-                                                >
-                                                    Excluir
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    {data?.data?.clients.length === 0 && (
-                                        <tr>
-                                            <td colSpan={3} className="text-center py-8 text-gray-400 animate-fade-in">
-                                                Nenhum cliente cadastrado.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
-                            </table>
+                            <>
+                                {/* Versão Desktop - Tabela */}
+                                {ListDT()}
+
+                                {/* Versão Mobile - Cards */}
+                                {ListMB()}
+                            </>
                         )}
                     </div>
 
