@@ -65,10 +65,14 @@ export default function LoginPage() {
         const resp = await Services.cadastro(body);
         if (resp) {
           Services.setStorageToken(resp?.data);
+          login("logado");
+          setIsLogin(true); // Volta para o formulário de login
           const redirect = search.get("redirect") || "/";
           navigate(redirect, { replace: true });
-          reset();
-          setIsLogin(true); // Volta para o formulário de login
+          // Limpa o formulário após o redirecionamento
+          setTimeout(() => {
+            reset();
+          }, 100);
         } else {
           throw new Error("");
         }
