@@ -135,6 +135,10 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
                                 <div className="text-sm font-medium text-green-600">Telefone</div>
                                 <div className="text-base text-green-700">{cliente.phone || "Não informado"}</div>
                             </div>
+                            <div>
+                                <div className="text-sm font-medium text-green-600">Empresa</div>
+                                <div className="text-base text-green-700">{cliente.company || "Não informado"}</div>
+                            </div>
                             <div className="flex gap-2 pt-2">
                                 <button
                                     className="flex-1 px-3 py-2 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition-all duration-150 text-sm font-medium"
@@ -171,6 +175,7 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
                             <th className="px-4 py-3 text-left">Nome</th>
                             <th className="px-4 py-3 text-left">Email</th>
                             <th className="px-4 py-3 text-left">Telefone</th>
+                            <th className="px-4 py-3 text-left">Empresa</th>
                             <th className="px-4 py-3 text-center">Ações</th>
                         </tr>
                     </thead>
@@ -185,6 +190,7 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
                                 <td className="px-4 py-3 font-medium text-green-900">{cliente.name}</td>
                                 <td className="px-4 py-3 text-green-700">{cliente.email}</td>
                                 <td className="px-4 py-3 text-green-700">{cliente.phone || "Não informado"}</td>
+                                <td className="px-4 py-3 text-green-700">{cliente.company || "Não informado"}</td>
                                 <td className="px-4 py-3 flex gap-2 justify-center">
                                     <button
                                         className="px-3 py-1 bg-blue-500 text-white rounded-lg shadow hover:bg-blue-600 hover:scale-105 transition-all duration-150"
@@ -236,7 +242,7 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
                         Sair
                     </button>
                 </div>
-                <div className="flex-1 p-5 max-w-3xl mx-auto w-full">
+                <div className="flex-1 md:px-25 mx-auto w-full">
                     <h1 className="text-3xl font-bold my-10 text-green-800 flex items-center gap-2 animate-fade-in">
                         <svg width="32" height="32" fill="none" viewBox="0 0 24 24"><path fill="#22c55e" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm1 17.93V20a1 1 0 1 1-2 0v-.07A8.001 8.001 0 0 1 4.07 13H4a1 1 0 1 1 0-2h.07A8.001 8.001 0 0 1 11 4.07V4a1 1 0 1 1 2 0v.07A8.001 8.001 0 0 1 13 19.93Z" /></svg>
                         <span>Clientes</span>
