@@ -5,6 +5,7 @@ import Services from "@/services/services";
 import useSWR from "swr";
 import { fetcher } from "@/services/api";
 import DialogConfirm from "@/components/DialogConfirm/DialogConfirm";
+import { getCurrentPageClients, getPageNumbers } from "@/helpers";
 
 
 
@@ -41,6 +42,8 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [clienteToDelete, setClienteToDelete] = useState<any>(null);
     const [dialogFeedback, setDialogFeedback] = useState<string | null>(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
 
     const { data, isLoading, error, mutate } = useSWR<any, any>(
         Services?.listClients(),
@@ -112,10 +115,68 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
         navigate("/login");
     }
 
+
+    // Calcular total de páginas
+    const totalPages = data?.data?.clients ? Math.ceil(data.data.clients.length / itemsPerPage) : 0;
+
+    // Componente de Paginação
+    const Pagination = () => {
+        if (totalPages <= 1) return null;
+
+        return (
+            <div className="flex items-center justify-center gap-2 my-8 animate-fade-in-up">
+                {/* Botão Anterior */}
+                <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="flex cursor-pointer items-center gap-2 px-4 py-2 text-green-700 bg-white border border-green-200 rounded-lg hover:bg-green-50 hover:border-green-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                >
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z" />
+                    </svg>
+                    Anterior
+                </button>
+
+                {/* Números das páginas */}
+                <div className="flex items-center gap-1">
+                    {getPageNumbers(currentPage, totalPages).map((page: any, index: number) => (
+                        <button
+                            key={index}
+                            onClick={() => typeof page === 'number' && setCurrentPage(page)}
+                            disabled={page === '...'}
+                            className={`w-10 cursor-pointer h-10 flex items-center justify-center rounded-lg font-medium transition-all duration-200 ${page === currentPage
+                                ? 'bg-green-600 text-white shadow-lg scale-105'
+                                : page === '...'
+                                    ? 'text-green-400 cursor-default'
+                                    : 'text-green-700 bg-white border border-green-200 hover:bg-green-50 hover:border-green-300'
+                                }`}
+                        >
+                            {page}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Botão Próximo */}
+                <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages}
+                    className="flex items-center gap-2 px-4 py-2 text-green-700 bg-white border border-green-200 rounded-lg hover:bg-green-50 hover:border-green-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-medium"
+                >
+                    Próximo
+                    <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z" />
+                    </svg>
+                </button>
+            </div>
+        );
+    };
+
     const ListMB: any = () => {
+        const currentClients = getCurrentPageClients(data, currentPage, itemsPerPage);
+
         return (
             <div className="md:hidden p-4 space-y-4">
-                {data?.data?.clients.map((cliente: any) => (
+                {currentClients.map((cliente: any) => (
                     <div
                         key={cliente.id}
                         className={`bg-white border border-green-200 rounded-lg p-4 shadow-sm transition-all duration-500 ${animandoId === cliente.id ? "bg-green-50 scale-[0.98] opacity-60" : "hover:bg-green-50"
@@ -157,7 +218,7 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
                         </div>
                     </div>
                 ))}
-                {data?.data?.clients.length === 0 && (
+                {currentClients.length === 0 && (
                     <div className="text-center py-8 text-gray-400 animate-fade-in">
                         Nenhum cliente cadastrado.
                     </div>
@@ -167,6 +228,8 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
     }
 
     const ListDT: any = () => {
+        const currentClients = getCurrentPageClients(data, currentPage, itemsPerPage);
+
         return (
             <div className="hidden md:block">
                 <table className="w-full rounded-xl">
@@ -180,10 +243,10 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
                         </tr>
                     </thead>
                     <tbody>
-                        {data?.data?.clients.map((cliente: any, index: number) => (
+                        {currentClients.map((cliente: any, index: number) => (
                             <tr
                                 key={cliente.id}
-                                className={`${index + 1 == data?.data?.clients?.length ? "" : "border-b"}  transition-all duration-500 ${animandoId === cliente.id ? "bg-green-50 scale-[0.98] opacity-60" : "hover:bg-green-50"
+                                className={`${index + 1 == currentClients?.length ? "" : "border-b"}  transition-all duration-500 ${animandoId === cliente.id ? "bg-green-50 scale-[0.98] opacity-60" : "hover:bg-green-50"
                                     } animate-fade-in-up`}
                                 style={{ transition: "all 0.4s cubic-bezier(.4,2,.6,1)" }}
                             >
@@ -208,9 +271,9 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
                                 </td>
                             </tr>
                         ))}
-                        {data?.data?.clients.length === 0 && (
+                        {currentClients.length === 0 && (
                             <tr>
-                                <td colSpan={4} className="text-center py-8 text-gray-400 animate-fade-in">
+                                <td colSpan={5} className="text-center py-8 text-gray-400 animate-fade-in">
                                     Nenhum cliente cadastrado.
                                 </td>
                             </tr>
@@ -292,7 +355,8 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
                         )}
                     </div>
 
-
+                    {/* Paginação */}
+                    {Pagination()}
 
                 </div>
             </div>
