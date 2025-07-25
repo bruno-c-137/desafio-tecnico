@@ -142,13 +142,12 @@ export default function DialogConfirm({
                                     {/* Feedback de ações */}
                                     {feedback && (
                                         <div className="my-4">
-                                            <div className={`p-4 rounded-xl border-2 ${
-                                                feedback.includes("Excluindo") 
-                                                    ? "bg-blue-50 border-blue-200" 
-                                                    : feedback.includes("excluído") 
-                                                    ? "bg-green-50 border-green-200" 
-                                                    : "bg-red-50 border-red-200"
-                                            }`}>
+                                            <div className={`p-4 rounded-xl border-2 ${feedback.includes("Excluindo")
+                                                    ? "bg-blue-50 border-blue-200"
+                                                    : feedback.includes("excluído")
+                                                        ? "bg-green-50 border-green-200"
+                                                        : "bg-red-50 border-red-200"
+                                                }`}>
                                                 <div className="flex items-center justify-center gap-3">
                                                     {feedback.includes("Excluindo") ? (
                                                         <>
@@ -159,7 +158,7 @@ export default function DialogConfirm({
                                                         <>
                                                             <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
                                                                 <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
-                                                                    <path fill="#fff" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>
+                                                                    <path fill="#fff" d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z" />
                                                                 </svg>
                                                             </div>
                                                             <span className="text-green-700 font-medium">{feedback}</span>
@@ -168,7 +167,7 @@ export default function DialogConfirm({
                                                         <>
                                                             <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
                                                                 <svg width="12" height="12" fill="none" viewBox="0 0 24 24">
-                                                                    <path fill="#fff" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/>
+                                                                    <path fill="#fff" d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z" />
                                                                 </svg>
                                                             </div>
                                                             <span className="text-red-700 font-medium">{feedback}</span>
@@ -179,34 +178,34 @@ export default function DialogConfirm({
                                         </div>
                                     )}
 
-                                    <div className="mt-6 flex gap-3 justify-end">
+                                    <div className="mt-6 flex gap-3 justify-center w-full">
                                         <button
                                             type="button"
-                                            className={`px-4 py-2 text-gray-600 bg-gray-100 rounded-lg transition-colors duration-200 font-medium ${
-                                                loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
-                                            }`}
+                                            className={`px-4 py-2 text-gray-600 bg-gray-100 rounded-lg transition-colors duration-200 font-medium ${loading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                                                }`}
                                             onClick={onCancel}
                                             disabled={loading}
                                         >
                                             {cancelText}
                                         </button>
-                                        <button
-                                            type="button"
-                                            className={`px-4 py-2 text-white rounded-lg transition-colors duration-200 font-medium ${
-                                                loading ? 'opacity-50 cursor-not-allowed' : colors.confirmBg
-                                            }`}
-                                            onClick={onConfirm}
-                                            disabled={loading}
-                                        >
-                                            {loading ? (
-                                                <div className="flex items-center gap-2">
-                                                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                                                    Processando...
-                                                </div>
-                                            ) : (
-                                                confirmText
-                                            )}
-                                        </button>
+                                        {!feedback?.includes("excluído") && !feedback?.includes("Excluindo") && (
+                                            <button
+                                                type="button"
+                                                className={`px-4 py-2 text-white rounded-lg transition-colors duration-200 font-medium ${loading ? 'opacity-50 cursor-not-allowed' : colors.confirmBg
+                                                    }`}
+                                                onClick={onConfirm}
+                                                disabled={loading}
+                                            >
+                                                {loading ? (
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                                        Processando...
+                                                    </div>
+                                                ) : (
+                                                    confirmText
+                                                )}
+                                            </button>
+                                        )}
                                     </div>
                                 </Dialog.Panel>
                             </div>

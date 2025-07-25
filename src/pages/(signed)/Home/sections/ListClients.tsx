@@ -100,8 +100,11 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
             await sleep(1500); // Mostrar sucesso por mais tempo
             // Fechar dialog após mostrar sucesso
             setShowDeleteDialog(false);
-            setClienteToDelete(null);
-            setDialogFeedback(null);
+            setTimeout(() => {
+                setClienteToDelete(null);
+                setDialogFeedback(null);
+            }, 300);
+
 
 
         } catch (error) {
@@ -109,8 +112,10 @@ export default function ListClients({ onMutateReady, onOpenModal, onOpenEditModa
             await sleep(2000); // Mostrar erro por mais tempo
             // Fechar dialog após mostrar erro
             setShowDeleteDialog(false);
-            setClienteToDelete(null);
-            setDialogFeedback(null);
+            setTimeout(() => {
+                setClienteToDelete(null);
+                setDialogFeedback(null);
+            }, 300);
 
         } finally {
             setAnimandoId(null);
