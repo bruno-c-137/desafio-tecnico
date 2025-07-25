@@ -59,12 +59,14 @@ export default function LoginPage() {
           name: data?.name,
           email: data?.email,
           password: data?.password,
-          confirmPassword: data?.confirmPassword,
+          // confirmPassword: data?.confirmPassword,
         };
 
         const resp = await Services.cadastro(body);
         if (resp) {
-          console.log('Cadastro realizado com sucesso');
+          Services.setStorageToken(resp?.data);
+          const redirect = search.get("redirect") || "/";
+          navigate(redirect, { replace: true });
           reset();
           setIsLogin(true); // Volta para o formulário de login
         } else {
@@ -87,10 +89,10 @@ export default function LoginPage() {
     <div className="w-full bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900 flex items-center">
       <div className="container">
         <div className="flex items-center justify-center">
-          <div className="w-1/2">
+          <div className="w-full lg:w-1/2">
             {/* Container principal com animação */}
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-8 border border-white/20 animate-fade-in login-container">
-              {/* Logo/Header */}
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl p-4 sm:p-8 border border-white/20 animate-fade-in login-container">
+              {/* Cabeçalho fixo */}
               <div className="text-center mb-8 animate-slide-down">
                 <div className="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
                   <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -105,115 +107,115 @@ export default function LoginPage() {
                 </p>
               </div>
 
-              {/* Formulário */}
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 animate-slide-up">
-                {!isLogin && (
-                  <div className="animate-fade-in">
+              {/* Conteúdo rolável do formulário */}
+              <div className={`scroll-container max-[380px]:px-1 ${!isLogin ? " max-[380px]:max-h-[50vh]  overflow-y-auto sm:max-h-none sm:overflow-visible" : ""}`}>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 animate-slide-up">
+                  {!isLogin && (
+                    <div className="animate-fade-in">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Nome completo
+                      </label>
+                      <input
+                        type="text"
+                        {...register("name", {
+                          required: "Nome é obrigatório"
+                        })}
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
+                        placeholder="Digite seu nome"
+                      />
+                      {errors.name && (
+                        <span className="text-red-400 text-sm mt-1">{errors.name.message}</span>
+                      )}
+                    </div>
+                  )}
+
+                  <div>
                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Nome completo
+                      Email
                     </label>
                     <input
-                      type="text"
-                      {...register("name", {
-                        required: "Nome é obrigatório"
-                      })}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
-                      placeholder="Digite seu nome"
-                    />
-                    {errors.name && (
-                      <span className="text-red-400 text-sm mt-1">{errors.name.message}</span>
-                    )}
-                  </div>
-                )}
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    {...register("email", {
-                      required: "Email é obrigatório",
-                      pattern: {
-                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                        message: "Email inválido"
-                      }
-                    })}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
-                    placeholder="Digite seu email"
-                  />
-                  {errors.email && (
-                    <span className="text-red-400 text-sm mt-1">{errors.email.message}</span>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Senha
-                  </label>
-                  <input
-                    type="password"
-                    {...register("password", {
-                      required: "Senha é obrigatória",
-                      minLength: {
-                        value: 6,
-                        message: "Senha deve ter pelo menos 6 caracteres"
-                      }
-                    })}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
-                    placeholder="Digite sua senha"
-                  />
-                  {errors.password && (
-                    <span className="text-red-400 text-sm mt-1">{errors.password.message}</span>
-                  )}
-                </div>
-
-                {!isLogin && (
-                  <div className="animate-fade-in">
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Confirmar senha
-                    </label>
-                    <input
-                      type="password"
-                      {...register("confirmPassword", {
-                        required: "Confirmação de senha é obrigatória",
-                        validate: (value) => {
-                          const password = watch("password");
-                          return value === password || "Senhas não coincidem";
+                      type="email"
+                      {...register("email", {
+                        required: "Email é obrigatório",
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: "Email inválido"
                         }
                       })}
                       className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
-                      placeholder="Confirme sua senha"
+                      placeholder="Digite seu email"
                     />
-                    {errors.confirmPassword && (
-                      <span className="text-red-400 text-sm mt-1">{errors.confirmPassword.message}</span>
+                    {errors.email && (
+                      <span className="text-red-400 text-sm mt-1">{errors.email.message}</span>
                     )}
                   </div>
-                )}
 
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Senha
+                    </label>
+                    <input
+                      type="password"
+                      {...register("password", {
+                        required: "Senha é obrigatória",
+                        minLength: {
+                          value: 6,
+                          message: "Senha deve ter pelo menos 6 caracteres"
+                        }
+                      })}
+                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
+                      placeholder="Digite sua senha"
+                    />
+                    {errors.password && (
+                      <span className="text-red-400 text-sm mt-1">{errors.password.message}</span>
+                    )}
+                  </div>
 
-
-                <button
-                  type="submit"
-                  disabled={sending}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl submit-button disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {sending ? (
-                    <span className="flex items-center justify-center">
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
-                      {isLogin ? "Entrando..." : "Criando conta..."}
-                    </span>
-                  ) : (
-                    isLogin ? "Entrar" : "Criar conta"
+                  {!isLogin && (
+                    <div className="animate-fade-in">
+                      <label className="block text-sm font-medium text-gray-300 mb-2">
+                        Confirmar senha
+                      </label>
+                      <input
+                        type="password"
+                        {...register("confirmPassword", {
+                          required: "Confirmação de senha é obrigatória",
+                          validate: (value) => {
+                            const password = watch("password");
+                            return value === password || "Senhas não coincidem";
+                          }
+                        })}
+                        className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 input-field"
+                        placeholder="Confirme sua senha"
+                      />
+                      {errors.confirmPassword && (
+                        <span className="text-red-400 text-sm mt-1">{errors.confirmPassword.message}</span>
+                      )}
+                    </div>
                   )}
-                </button>
-              </form>
+
+                  <button
+                    type="submit"
+                    disabled={sending}
+                    className="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl submit-button disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {sending ? (
+                      <span className="flex items-center justify-center">
+                        <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        {isLogin ? "Entrando..." : "Criando conta..."}
+                      </span>
+                    ) : (
+                      isLogin ? "Entrar" : "Criar conta"
+                    )}
+                  </button>
+                </form>
+              </div>
 
               {/* Divisor */}
-              <div className="my-6 flex items-center">
+              <div className="my-2 sm:my-6 flex items-center">
                 <div className="flex-1 border-t border-white/20"></div>
                 <span className="px-4 text-sm text-gray-400">ou</span>
                 <div className="flex-1 border-t border-white/20"></div>
@@ -222,7 +224,7 @@ export default function LoginPage() {
 
 
               {/* Toggle entre login e cadastro */}
-              <div className="mt-8 text-center">
+              <div className="mt-4 sm:mt-8 text-center">
                 <p className="text-gray-300">
                   {isLogin ? "Não tem uma conta?" : "Já tem uma conta?"}
                   <button
