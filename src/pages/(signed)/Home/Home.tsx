@@ -1,22 +1,45 @@
-import useSWR from "swr";
-import fetcher from "@/services/api";
+
+import { Modal } from "rsuite";
+import ListClients from "./sections/ListClients";
+import "./style.scss";
+import { useState } from "react";
+import ModalFormAddClient from "./sections/ModalFormAddClient";
+
+
 
 export default function HomePage() {
-  // const { data, error } = useSWR("/", fetcher, { suspense: true });
-  // console.log(data?.results);
+
+  const [showModal, setShowModal] = useState(true);
+
+  const ModalNovoCliente: any = () => {
+    return (
+      <div className="flex items-center justify-center">
+        <Modal
+          size={`sm`}
+          open={!!showModal}
+          onClose={() => {
+
+
+            setShowModal(false);
+          }}
+        // dialogClassName={`modal-regulamento`}
+        >
+          <Modal.Header></Modal.Header>
+
+
+          <Modal.Body>
+            <ModalFormAddClient />
+          </Modal.Body>
+
+        </Modal>
+      </div>
+    )
+  }
 
   return (
-    <div className="container flex flex-col flex-1">
-      <div className="bg-green-100 flex-1 p-5">
-        <h1 className="text-2xl my-10">
-          <strong>Home</strong>
-        </h1>
-        {/* <div className="relative overflow-x-auto">
-          {data?.results?.map((opt: any, index: any) => {
-            return <div key={index}>{opt?.cell}</div>;
-          })}
-        </div> */}
-      </div>
-    </div>
+    <>
+      {ModalNovoCliente()}
+      <ListClients />
+    </>
   );
 }

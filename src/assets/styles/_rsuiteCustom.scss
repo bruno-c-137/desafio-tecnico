@@ -1,0 +1,122 @@
+.rs-modal-content {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%) !important;
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 25px 50px -12px rgba(34, 197, 94, 0.25) !important;
+}
+
+.rs-modal-body {
+  // overflow: hidden !important;
+}
+
+.rs-modal-wrapper {
+  display: flex !important;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  width: 100%;
+  margin: 0;
+  height: 100%;
+  justify-content: center;
+  max-width: none;
+}
+
+.rs-btn-close {
+  padding: 0 !important;
+  z-index: 50;
+  box-sizing: border-box;
+  display: inline-block;
+  border-radius: 100%;
+  font-size: 27px !important;
+  width: 42px !important;
+  height: 42px;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%) !important;
+  border: 2px solid #22c55e !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3) !important;
+
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    transform: scale(1.1) rotate(90deg);
+    background: linear-gradient(135deg, #16a34a 0%, #15803d 100%) !important;
+    box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4) !important;
+  }
+
+  &:before,
+  &:after {
+    background: #ffffff;
+    position: absolute;
+    content: "";
+    width: 1.5rem;
+    height: 3px;
+    top: 18px;
+    left: 7px;
+    border-radius: 5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  &:before {
+    transform: rotate(45deg);
+  }
+
+  &:after {
+    transform: rotate(-45deg);
+  }
+
+  svg {
+    display: none;
+  }
+}
+
+.rs-modal-content {
+  border-radius: 1.5rem !important;
+  overflow: hidden;
+}
+
+.rs-modal-header {
+
+  color: white !important;
+  padding: 1.5rem 2rem !important;
+  border-bottom: none !important;
+
+  .rs-modal-title {
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+  }
+}
+
+.rs-modal-body {
+  margin-top: 0 !important;
+  background: transparent !important;
+}
+
+// Animações para o modal
+.rs-modal-wrapper {
+  animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.rs-modal-content {
+  animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
